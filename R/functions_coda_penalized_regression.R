@@ -152,11 +152,14 @@ coda_logistic_lasso  <-  function(y,X,lambda, maxiter=400, maxiter2=50, r=10,
   df<-data.frame(y,z)
   dev_explained_beta_res <- 1-(deviance(glm(y ~ scorebalance, data= df, family = binomial()))/nulldev)
 
+
+  idselected<-which(abs(beta_res)>0)
+
   results <- list(
        "number of iterations" = k,
        "number of selected taxa" = sum(abs(beta_res)>0)-1,
-       "indices of taxa with non-zero coeff" = which(abs(beta_res)>0)-1,
-       "name of taxa with non-zero coeff" = colnames(z)[abs(beta_res[-1])>0],
+       "indices of taxa with non-zero coeff" = idselected[-1]-1,
+       "name of taxa with non-zero coeff" = colnames(z)[idselected[-1]],
        "beta non-zero coefficients" = beta_res[abs(beta_res)>0],
        "proportion of explained deviance" = dev_explained_beta_res,
   	   "betas" = beta_res)
@@ -186,7 +189,7 @@ coda_logistic_elasticNet <- function(y,X,lambda, alpha=0.5, maxiter=400, maxiter
   if (!is.numeric(y)){ #Check data
     y  <-  as.numeric(y)-1
   }
-  
+
   p <- ncol(X)   # p: number of covariates after filtering
   n <- nrow(X);
   # log transformation Z=log(X)
@@ -291,7 +294,7 @@ coda_logistic_elasticNet <- function(y,X,lambda, alpha=0.5, maxiter=400, maxiter
   }else{
     p_c0ginv=0;
   }
-  
+
     # p_c0ginv=ginv(p_c0) #use this only if necessary
 
   beta1 <- projection(beta[indx],p_c0, p_c0ginv)
@@ -301,13 +304,16 @@ coda_logistic_elasticNet <- function(y,X,lambda, alpha=0.5, maxiter=400, maxiter
   dev_explained_beta_res <- 1-(nrow(X)*2*g(beta_res,z, y, n)/nulldev)
 
 
-  results <- list("number of iterations" = k,
-                "number of selected taxa" = sum(abs(beta_res)>0)-1,
-                "indices of taxa with non-zero coeff" = which(abs(beta_res)>0)-1,
-                "name of taxa with non-zero coeff" = colnames(z)[abs(beta_res[-1])>0],
-                "beta non-zero coefficients" = beta_res[abs(beta_res)>0],
-                "proportion of explained deviance" = dev_explained_beta_res,
-                "betas" = beta_res)
+  idselected<-which(abs(beta_res)>0)
+
+  results <- list(
+    "number of iterations" = k,
+    "number of selected taxa" = sum(abs(beta_res)>0)-1,
+    "indices of taxa with non-zero coeff" = idselected[-1]-1,
+    "name of taxa with non-zero coeff" = colnames(z)[idselected[-1]],
+    "beta non-zero coefficients" = beta_res[abs(beta_res)>0],
+    "proportion of explained deviance" = dev_explained_beta_res,
+    "betas" = beta_res)
 
   return(results)
 
@@ -405,20 +411,22 @@ trapezInteg  <-  function(x,y) {
 
 lambdaRange_codalasso  <-  function(y,X,lambdaSeq=seq(0,1,0.01)){
   numVarAct=NULL;
+  print(c("lambda", "num.selected", "prop.explained.dev"))
   for (lambda in lambdaSeq){
     results  <-  coda_logistic_lasso(y,X,lambda, maxiter = 100);
     numVarAct = c(numVarAct,results[[2]]);
-	print(c(lambda, round(results[[2]]),results[[6]]));
+    cat(sprintf("%.4f  %.0f  %.4f\n",lambda, results[[2]],results[[6]]))
   }
   #return(numVarAct);
 }
 
 lambdaRange_elasticnet  <-  function(y,X,lambdaSeq=seq(0,1,0.01)){
   numVarAct=NULL;
-  for (lambda in lambdaSeq){
+  print(c("lambda", "num.selected", "prop.explained.dev"))
+    for (lambda in lambdaSeq){
     results  <-  coda_logistic_elasticNet(y,X,lambda, maxiter = 100);
     numVarAct = c(numVarAct,results[[2]]);
-    print(c(lambda, round(results[[2]]),results[[6]]));
+    cat(sprintf("%.4f  %.0f  %.4f\n",lambda, results[[2]],results[[6]]))
   }
   #return(numVarAct);
 }
