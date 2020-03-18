@@ -156,7 +156,7 @@ coda_logistic_lasso  <-  function(y,X,lambda, maxiter=400, maxiter2=50, r=10,
        "number of iterations" = k,
        "number of selected taxa" = sum(abs(beta_res)>0)-1,
        "indices of taxa with non-zero coeff" = which(abs(beta_res)>0)-1,
-       "taxa with non-zero coeff" = colnames(z)[abs(beta_res)>0],
+       "name of taxa with non-zero coeff" = colnames(z)[abs(beta_res[-1])>0],
        "beta non-zero coefficients" = beta_res[abs(beta_res)>0],
        "proportion of explained deviance" = dev_explained_beta_res,
   	   "betas" = beta_res)
@@ -304,7 +304,7 @@ coda_logistic_elasticNet <- function(y,X,lambda, alpha=0.5, maxiter=400, maxiter
   results <- list("number of iterations" = k,
                 "number of selected taxa" = sum(abs(beta_res)>0)-1,
                 "indices of taxa with non-zero coeff" = which(abs(beta_res)>0)-1,
-                "name of taxa with non-zero coeff" = colnames(z)[abs(beta_res)>0],
+                "name of taxa with non-zero coeff" = colnames(z)[abs(beta_res[-1])>0],
                 "beta non-zero coefficients" = beta_res[abs(beta_res)>0],
                 "proportion of explained deviance" = dev_explained_beta_res,
                 "betas" = beta_res)
@@ -408,9 +408,9 @@ lambdaRange_codalasso  <-  function(y,X,lambdaSeq=seq(0,1,0.01)){
   for (lambda in lambdaSeq){
     results  <-  coda_logistic_lasso(y,X,lambda, maxiter = 100);
     numVarAct = c(numVarAct,results[[2]]);
-    print(c(lambda, results[[2]],results[[6]]));
+	print(c(lambda, round(results[[2]]),results[[6]]));
   }
-  return(numVarAct);
+  #return(numVarAct);
 }
 
 lambdaRange_elasticnet  <-  function(y,X,lambdaSeq=seq(0,1,0.01)){
@@ -418,7 +418,7 @@ lambdaRange_elasticnet  <-  function(y,X,lambdaSeq=seq(0,1,0.01)){
   for (lambda in lambdaSeq){
     results  <-  coda_logistic_elasticNet(y,X,lambda, maxiter = 100);
     numVarAct = c(numVarAct,results[[2]]);
-    print(c(lambda, results[[2]],results[[6]]));
+    print(c(lambda, round(results[[2]]),results[[6]]));
   }
-  return(numVarAct);
+  #return(numVarAct);
 }
