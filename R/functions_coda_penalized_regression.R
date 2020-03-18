@@ -156,13 +156,13 @@ coda_logistic_lasso  <-  function(y,X,lambda, maxiter=400, maxiter2=50, r=10,
   idselected<-which(abs(beta_res)>0)
 
   results <- list(
-       "number of iterations" = k,
-       "number of selected taxa" = sum(abs(beta_res)>0)-1,
-       "indices of taxa with non-zero coeff" = idselected[-1]-1,
-       "name of taxa with non-zero coeff" = colnames(z)[idselected[-1]],
-       "beta non-zero coefficients" = beta_res[abs(beta_res)>0],
-       "proportion of explained deviance" = dev_explained_beta_res,
-  	   "betas" = beta_res)
+    "number of iterations" = k,
+    "number of selected variables" = sum(abs(beta_res)>0)-1,
+    "indices of selected variables" = idselected[-1]-1,
+    "name of selected variables" = colnames(z)[idselected[-1]],
+    "beta non-zero coefficients" = beta_res[abs(beta_res)>0],
+    "proportion of explained deviance" = dev_explained_beta_res,
+    "betas" = beta_res)
 
   return(results)
 
@@ -308,9 +308,9 @@ coda_logistic_elasticNet <- function(y,X,lambda, alpha=0.5, maxiter=400, maxiter
 
   results <- list(
     "number of iterations" = k,
-    "number of selected taxa" = sum(abs(beta_res)>0)-1,
-    "indices of taxa with non-zero coeff" = idselected[-1]-1,
-    "name of taxa with non-zero coeff" = colnames(z)[idselected[-1]],
+    "number of selected variables" = sum(abs(beta_res)>0)-1,
+    "indices of selected variables" = idselected[-1]-1,
+    "name of selected variables" = colnames(z)[idselected[-1]],
     "beta non-zero coefficients" = beta_res[abs(beta_res)>0],
     "proportion of explained deviance" = dev_explained_beta_res,
     "betas" = beta_res)
